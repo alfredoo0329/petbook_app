@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
 import 'package:petbook_app/src/providers/petfinder_provider.dart';
+import 'package:petbook_app/src/widgets/pet_card.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,10 +16,21 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Color(0xFFFF7043),
+        textTheme: TextTheme(
+          headline1: TextStyle(fontFamily: 'JetBrains Mono'),
+          headline2: TextStyle(fontFamily: 'JetBrains Mono'),
+          bodyText1: TextStyle(fontFamily: 'JetBrains Mono'),
+          bodyText2: TextStyle(fontFamily: 'JetBrains Mono'),
+        ),
+      ),
       title: 'Material App',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Material App Bar'),
+          title: Text('PetBook',
+              style: TextStyle(
+                  fontFamily: 'JetBrains Mono', fontWeight: FontWeight.w700)),
         ),
         body: FutureBuilder(
           future: _petfinder.getPets(),
@@ -28,16 +40,15 @@ class _MyAppState extends State<MyApp> {
             return ListView.builder(
               itemCount: pets.length,
               itemBuilder: (_, i) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(pets[i].photos.isNotEmpty
-                        ? pets[i].photos[0].small
-                        : 'https://icon-library.com/images/no-image-icon/no-image-icon-12.jpg'),
-                  ),
-                  title: Text(pets[i].name),
-                  trailing: Text(pets[i].age),
-                  subtitle: Text(
-                      pets[i].description != null ? pets[i].description : ''),
+                return PetCard(
+                  name: pets[i].name,
+                  age: pets[i].age,
+                  breed: pets[i].breeds.primary,
+                  size: pets[i].size,
+                  gender: pets[i].gender,
+                  imageUrl: pets[i].photos.isNotEmpty
+                      ? pets[i].photos.first.medium
+                      : "",
                 );
               },
             );
