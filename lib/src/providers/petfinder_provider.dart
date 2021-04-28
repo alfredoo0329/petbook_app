@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:petbook_flutter/src/models/pet_model.dart';
-import 'package:petbook_flutter/src/models/pets_model.dart';
-import 'package:petbook_flutter/src/models/token_model.dart';
+import 'package:petbook_app/src/models/pet_model.dart';
+import 'package:petbook_app/src/models/pets_model.dart';
+import 'package:petbook_app/src/models/token_model.dart';
 import 'package:http/http.dart' as http;
 
 class PetfinderProvider {

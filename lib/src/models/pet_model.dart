@@ -1,4 +1,4 @@
-import 'package:petbook_flutter/src/models/href_model.dart';
+import 'package:petbook_app/src/models/href_model.dart';
 
 class Pet {
   int id;

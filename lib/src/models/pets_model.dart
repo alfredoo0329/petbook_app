@@ -1,4 +1,4 @@
-import 'package:petbook_flutter/src/models/pet_model.dart';
+import 'package:petbook_app/src/models/pet_model.dart';
 import 'href_model.dart';
 
 class Pets {
