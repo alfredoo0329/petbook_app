@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PetCard extends StatelessWidget {
   PetCard(
-      {this.name, this.age, this.breed, this.size, this.gender, this.imageUrl});
+      {this.name,
+      this.status,
+      this.age,
+      this.breed,
+      this.size,
+      this.gender,
+      this.imageUrl});
 
   final String name;
+  final String status;
   final String age;
   final String breed;
   final String size;
@@ -27,14 +35,30 @@ class PetCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(
-                    name,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w800, fontSize: 24),
+                      ),
+                      Text(
+                        '${status[0].toUpperCase() + status.substring(1)}',
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(width: 16),
-                Text(gender)
+                Icon(
+                  gender == 'Male'
+                      ? MdiIcons.genderMale
+                      : MdiIcons.genderFemale,
+                  color: gender == 'Male' ? Colors.blue : Colors.pink,
+                  size: 32,
+                ),
               ],
             ),
           ),
@@ -135,8 +159,9 @@ class PetCard extends StatelessWidget {
                         icon: Icon(Icons.arrow_forward_rounded),
                         label: Text('View more'),
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
+                          elevation:
+                              MaterialStateProperty.resolveWith((states) => 0),
+                          backgroundColor: MaterialStateProperty.resolveWith(
                             (states) {
                               return Colors.deepOrange[400];
                             },
@@ -145,10 +170,22 @@ class PetCard extends StatelessWidget {
                       ),
                       Spacer(),
                       IconButton(
-                          icon: Icon(Icons.share_rounded), onPressed: () {}),
-                      IconButton(
-                        icon: Icon(Icons.save_rounded),
-                        onPressed: () {},
+                          icon: Icon(
+                            Icons.share_rounded,
+                            color: Colors.lightBlue,
+                            size: 30,
+                          ),
+                          onPressed: () {}),
+                      Transform.translate(
+                        offset: Offset(0.0, -3.0),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.star_rounded,
+                            color: Colors.yellowAccent[700],
+                            size: 36,
+                          ),
+                          onPressed: () {},
+                        ),
                       )
                     ],
                   ),

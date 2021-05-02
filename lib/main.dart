@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
               itemBuilder: (_, i) {
                 return PetCard(
                   name: pets[i].name,
+                  status: pets[i].status,
                   age: pets[i].age,
                   breed: pets[i].breeds.primary,
                   size: pets[i].size,
