@@ -2,16 +2,16 @@ import 'package:petbook_app/src/models/pet_model.dart';
 import 'href_model.dart';
 
 class Pets {
-  List<Pet> pets;
+  List<Pet> petList;
   Pagination pagination;
 
-  Pets({this.pets, this.pagination});
+  Pets({this.petList, this.pagination});
 
   Pets.fromJson(Map<String, dynamic> json) {
     if (json['animals'] != null) {
-      pets = [];
+      petList = [];
       json['animals'].forEach((pet) {
-        pets.add(new Pet.fromJson(pet));
+        petList.add(new Pet.fromJson(pet));
       });
     }
     pagination = json['pagination'] != null
@@ -21,8 +21,8 @@ class Pets {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.pets != null) {
-      data['animals'] = this.pets.map((pet) => pet.toJson()).toList();
+    if (this.petList != null) {
+      data['animals'] = this.petList.map((pet) => pet.toJson()).toList();
     }
     if (this.pagination != null) {
       data['pagination'] = this.pagination.toJson();

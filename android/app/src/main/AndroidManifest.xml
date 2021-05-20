@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.petbook_app">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="petbook_app"
         android:icon="@mipmap/ic_launcher">

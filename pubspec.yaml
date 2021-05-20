@@ -24,7 +24,9 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.2
+  flutter_swiper: ^1.1.6
   material_design_icons_flutter: ^4.0.5955
+  font_awesome_flutter: ^9.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -48,6 +50,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/fonts/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -64,19 +67,23 @@ flutter:
   fonts:
     - family: JetBrains Mono
       fonts:
-        - asset: assets/fonts/JetBrainsMono-Regular.ttf
-        - asset: assets/fonts/JetBrainsMono-ExtraLight.ttf
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Thin.ttf
           weight: 100
-        - asset: assets/fonts/JetBrainsMono-Light.ttf
+        - asset: assets/fonts/Poppins-ExtraLight.ttf
           weight: 200
-        - asset: assets/fonts/JetBrainsMono-Thin.ttf
+        - asset: assets/fonts/Poppins-Light.ttf
           weight: 300
-        - asset: assets/fonts/JetBrainsMono-Medium.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
           weight: 700
-        - asset: assets/fonts/JetBrainsMono-ExtraBold.ttf
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
           weight: 800
+        - asset: assets/fonts/Poppins-Black.ttf
+          weight: 900
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

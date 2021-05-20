@@ -1,200 +1,192 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:petbook_app/src/models/pet_model.dart';
+import 'package:petbook_app/src/utils/utils.dart';
 
 class PetCard extends StatelessWidget {
-  PetCard(
-      {this.name,
-      this.status,
-      this.age,
-      this.breed,
-      this.size,
-      this.gender,
-      this.imageUrl});
+  PetCard({this.pet});
 
-  final String name;
-  final String status;
-  final String age;
-  final String breed;
-  final String size;
-  final String gender;
-  final String imageUrl;
+  final Pet pet;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Card(
-          elevation: 8,
-          margin: EdgeInsets.fromLTRB(44, 18, 44, 0),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w800, fontSize: 24),
-                      ),
-                      Text(
-                        '${status[0].toUpperCase() + status.substring(1)}',
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 16),
-                Icon(
-                  gender == 'Male'
-                      ? MdiIcons.genderMale
-                      : MdiIcons.genderFemale,
-                  color: gender == 'Male' ? Colors.blue : Colors.pink,
-                  size: 32,
-                ),
-              ],
+    //print('${pet.name} ------- ${pet.photos}');
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 24),
+      elevation: 10,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(33)),
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: _getPetImage(pet.photos, pet.type),
             ),
-          ),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-          child: Image(
-            fit: BoxFit.cover,
-            height: 250,
-            width: MediaQuery.of(context).size.width - 44,
-            image: NetworkImage(imageUrl.isNotEmpty
-                ? imageUrl
-                : 'https://icon-library.com/images/no-image-icon/no-image-icon-12.jpg'),
-          ),
-        ),
-        Card(
-          elevation: 8,
-          margin: EdgeInsets.fromLTRB(44, 0, 44, 0),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15))),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Flex(
-                  direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Size',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w200,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(size,
-                              style: TextStyle(fontWeight: FontWeight.w500))
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Age',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w200,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(age,
-                              style: TextStyle(fontWeight: FontWeight.w500))
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      flex: 2,
-                      fit: FlexFit.tight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Breed',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w200,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            breed,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+              child: Column(
+                children: [
+                  _getPetTopTitle(context, pet.status, pet.distance),
+                  _getPetTitle(
+                      context, pet.name, pet.gender, pet.tags.isNotEmpty),
+                  Container(
+                    height: pet.tags.isEmpty ? 0 : 26,
+                    child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children:
+                            pet.tags.isNotEmpty ? _getPetTags(pet.tags) : []),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      ElevatedButton.icon(
+                      TextButton(
                         onPressed: () {},
-                        icon: Icon(Icons.arrow_forward_rounded),
-                        label: Text('View more'),
-                        style: ButtonStyle(
-                          elevation:
-                              MaterialStateProperty.resolveWith((states) => 0),
-                          backgroundColor: MaterialStateProperty.resolveWith(
-                            (states) {
-                              return Colors.deepOrange[400];
-                            },
-                          ),
+                        child: Text(
+                          'SHARE',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        style: TextButton.styleFrom(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(50, 30),
                         ),
                       ),
-                      Spacer(),
-                      IconButton(
-                          icon: Icon(
-                            Icons.share_rounded,
-                            color: Colors.lightBlue,
-                            size: 30,
-                          ),
-                          onPressed: () {}),
-                      Transform.translate(
-                        offset: Offset(0.0, -3.0),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.star_rounded,
-                            color: Colors.yellowAccent[700],
-                            size: 36,
-                          ),
-                          onPressed: () {},
+                      TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'LIKE',
+                          style: TextStyle(fontSize: 12, color: Colors.pink),
                         ),
-                      )
+                        style: TextButton.styleFrom(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(50, 30),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getPetImage(List<Photos> photos, String type) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: Container(
+        width: double.infinity,
+        child: Image(
+          fit: BoxFit.cover,
+          image: photos.isNotEmpty
+              ? NetworkImage(photos[0].medium)
+              : AssetImage(getImageByType(type)),
+          errorBuilder: (_, __, ___) =>
+              Image(image: AssetImage(getImageByType(type))),
+        ),
+      ),
+    );
+  }
+
+  Widget _getPetTopTitle(BuildContext context, String status, double distance) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          status.toUpperCase(),
+          style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).primaryColorDark),
+        ),
+        distance != null
+            ? Text(
+                '${distance.ceil()}MI',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColorDark),
+              )
+            : SizedBox(),
+      ],
+    );
+  }
+
+  Widget _getPetTitle(
+      BuildContext context, String name, String gender, bool hasTags) {
+    return Padding(
+      padding: hasTags ? EdgeInsets.only(bottom: 16.0) : EdgeInsets.zero,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Tooltip(
+              message: name,
+              child: RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                      text: name,
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).primaryColorDark),
+                      children: [
+                        TextSpan(
+                            text: '.',
+                            style: TextStyle(
+                                fontSize: 44,
+                                fontWeight: FontWeight.w900,
+                                height: .6,
+                                color: Theme.of(context).primaryColor))
+                      ])),
             ),
           ),
+          Tooltip(
+            message: gender,
+            child: Icon(
+              gender == 'Female' ? MdiIcons.genderFemale : MdiIcons.genderMale,
+              color: gender == 'Female' ? Colors.pink : Colors.blue,
+              size: 32,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _getPetTags(List<String> tags) {
+    List<Widget> tagList = [];
+    for (int i = 0; i < tags.length; i++) {
+      final tag = _getTag(
+          tags[i],
+          (i + 1) % 2 == 0
+              ? const Color.fromRGBO(255, 172, 139, 1)
+              : const Color.fromRGBO(255, 139, 139, 1));
+      tagList.add(tag);
+      tagList.add(SizedBox(width: 8));
+    }
+    return tagList;
+  }
+
+  Widget _getTag(String tag, Color color) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        height: 14,
+        color: color,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: Text(
+          tag.toUpperCase(),
+          style: TextStyle(
+              color: Colors.white, fontSize: 11, fontWeight: FontWeight.w500),
         ),
-      ],
+      ),
     );
   }
 }

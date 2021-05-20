@@ -7,7 +7,7 @@ class Pet {
   String type;
   String species;
   Breeds breeds;
-  Colors colors;
+  PetColors colors;
   String age;
   String gender;
   String size;
@@ -23,6 +23,7 @@ class Pet {
   String publishedAt;
   Contact contact;
   Links lLinks;
+  double distance;
 
   Pet(
       {this.id,
@@ -46,7 +47,8 @@ class Pet {
       this.status,
       this.publishedAt,
       this.contact,
-      this.lLinks});
+      this.lLinks,
+      this.distance});
 
   Pet.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -57,7 +59,7 @@ class Pet {
     breeds =
         json['breeds'] != null ? new Breeds.fromJson(json['breeds']) : null;
     colors =
-        json['colors'] != null ? new Colors.fromJson(json['colors']) : null;
+        json['colors'] != null ? new PetColors.fromJson(json['colors']) : null;
     age = json['age'];
     gender = json['gender'];
     size = json['size'];
@@ -88,6 +90,7 @@ class Pet {
     contact =
         json['contact'] != null ? new Contact.fromJson(json['contact']) : null;
     lLinks = json['_links'] != null ? new Links.fromJson(json['_links']) : null;
+    distance = json['distance'];
   }
 
   Map<String, dynamic> toJson() {
@@ -130,6 +133,7 @@ class Pet {
     if (this.lLinks != null) {
       data['_links'] = this.lLinks.toJson();
     }
+    data['distance'] = this.distance;
     return data;
   }
 }
@@ -159,14 +163,14 @@ class Breeds {
   }
 }
 
-class Colors {
+class PetColors {
   String primary;
   String secondary;
   String tertiary;
 
-  Colors({this.primary, this.secondary, this.tertiary});
+  PetColors({this.primary, this.secondary, this.tertiary});
 
-  Colors.fromJson(Map<String, dynamic> json) {
+  PetColors.fromJson(Map<String, dynamic> json) {
     primary = json['primary'];
     secondary = json['secondary'];
     tertiary = json['tertiary'];
