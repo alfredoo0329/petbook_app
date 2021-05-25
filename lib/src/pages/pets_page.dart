@@ -22,7 +22,7 @@ class _PetsPageState extends State<PetsPage> {
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 18),
-          width: MediaQuery.of(context).size.width,
+          width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage('assets/images/fondoPET.png'),

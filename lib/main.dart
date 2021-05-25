@@ -23,10 +23,22 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Color.fromRGBO(255, 143, 101, 1),
         primaryColorDark: Color.fromRGBO(37, 20, 94, 1),
         textTheme: TextTheme(
-          headline1: TextStyle(fontFamily: 'Poppins'),
-          headline2: TextStyle(fontFamily: 'Poppins'),
-          bodyText1: TextStyle(fontFamily: 'Poppins'),
-          bodyText2: TextStyle(fontFamily: 'Poppins'),
+          headline1: TextStyle(
+              fontFamily: 'Poppins',
+              color: Color.fromRGBO(37, 20, 94, 1),
+              height: 1.8),
+          headline2: TextStyle(
+              fontFamily: 'Poppins',
+              color: Color.fromRGBO(37, 20, 94, 1),
+              height: 1.8),
+          bodyText1: TextStyle(
+              fontFamily: 'Poppins',
+              color: Color.fromRGBO(37, 20, 94, 1),
+              height: 1.8),
+          bodyText2: TextStyle(
+              fontFamily: 'Poppins',
+              color: Color.fromRGBO(37, 20, 94, 1),
+              height: 1.5),
         ),
       ),
       title: 'Material App',

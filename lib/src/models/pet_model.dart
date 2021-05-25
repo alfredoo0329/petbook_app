@@ -1,6 +1,11 @@
 import 'package:petbook_app/src/models/href_model.dart';
 
 class Pet {
+  String uniqueIdImage;
+  String uniqueIdTopTitle;
+  String uniqueIdTitle;
+  String uniqueIdTags;
+
   int id;
   String organizationId;
   String url;

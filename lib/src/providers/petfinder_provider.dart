@@ -59,8 +59,12 @@ class PetfinderProvider {
   }
 
   Future<List<Pet>> getPets() async {
+    //IS LOADING CHECK---------------------------
+
     if (_loadingStream) return [];
     _loadingStream = true;
+
+    //GET TOKEN---------------------------
 
     await getToken();
     if (_token == null) {
@@ -74,14 +78,18 @@ class PetfinderProvider {
       return _pets.petList;
     }
 
-    Map<String, dynamic> body = {'type': 'Bird'};
+    //SEND REQUEST---------------------------
+
+    Map<String, dynamic> body = {'type': 'Horse'};
     if (_pets != null)
-      body = {'page': '${_pets.pagination.currentPage + 1}', 'type': 'Bird'};
+      body = {'page': '${_pets.pagination.currentPage + 1}', 'type': 'Horse'};
 
     final url = Uri.https(_domain, 'v2/animals', body);
     final header = {
       'Authorization': '${_token.tokenType} ${_token.accessToken}'
     };
+
+    //CHECK DECODED DATA---------------------------
 
     dynamic decodedData;
     try {
@@ -96,6 +104,8 @@ class PetfinderProvider {
       _loadingStream = false;
       return _pets.petList;
     }
+
+    //GET DATA AND UPDATE STREAM---------------------------
 
     final newPets = Pets.fromJson(decodedData);
 
@@ -112,7 +122,6 @@ class PetfinderProvider {
     petsSink(_pets.petList);
 
     _loadingStream = false;
-
     return _pets.petList;
   }
 

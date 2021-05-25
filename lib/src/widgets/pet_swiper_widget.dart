@@ -23,7 +23,14 @@ class PetSwiper extends StatelessWidget {
         controller: _swiperController,
         layout: SwiperLayout.STACK,
         physics: ScrollPhysics(),
+        onTap: (pos) {
+          Navigator.pushNamed(context, 'pet', arguments: pets[pos]);
+        },
         itemBuilder: (BuildContext context, int pos) {
+          pets[pos].uniqueIdImage = '${pets[pos].id}-image';
+          pets[pos].uniqueIdTopTitle = '${pets[pos].id}-title';
+          pets[pos].uniqueIdTitle = '${pets[pos].id}-topTitle';
+          pets[pos].uniqueIdTags = '${pets[pos].id}-tags';
           return PetCard(pet: pets[pos]);
         },
         onIndexChanged: (index) {
