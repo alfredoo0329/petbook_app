@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:petbook_app/src/models/organization_model.dart';
+import 'package:petbook_app/src/models/organizations_model.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
-import 'package:petbook_app/src/models/pet_types_model.dart';
 import 'package:petbook_app/src/models/pets_model.dart';
 import 'package:petbook_app/src/models/token_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:petbook_app/src/utils/utils.dart';
 
 class PetfinderProvider {
   //CONFIGURATION
@@ -15,13 +17,23 @@ class PetfinderProvider {
   //PETS DATA STORAGE VARIABLES
   Token _token;
   Pets _pets;
+  Organizations _organizations;
 
   //STREAM CONTROLLER FUNCTIONS
   final _petsStreamController = StreamController<List<Pet>>.broadcast();
   Function(List<Pet>) get petsSink => _petsStreamController.sink.add;
   Stream<List<Pet>> get petsStream => _petsStreamController.stream;
-  void disposeStream() => _petsStreamController.close();
-  bool _loadingStream = false;
+  void disposePetsStream() => _petsStreamController.close();
+  bool _loadingPetsStream = false;
+
+  final _organizationsStreamController =
+      StreamController<List<Organization>>.broadcast();
+  Function(List<Organization>) get organizationsSink =>
+      _organizationsStreamController.sink.add;
+  Stream<List<Organization>> get organizationsStream =>
+      _organizationsStreamController.stream;
+  void disposeOrganizationsStream() => _organizationsStreamController.close();
+  bool _loadingOrganizationsStream = false;
 
   //REQUIESTS POST & GET
   Future<dynamic> _postRequest(
@@ -61,8 +73,8 @@ class PetfinderProvider {
   Future<List<Pet>> getPets() async {
     //IS LOADING CHECK---------------------------
 
-    if (_loadingStream) return [];
-    _loadingStream = true;
+    if (_loadingPetsStream) return [];
+    _loadingPetsStream = true;
 
     //GET TOKEN---------------------------
 
@@ -70,19 +82,18 @@ class PetfinderProvider {
     if (_token == null) {
       if (_pets == null) {
         petsSink([]);
-        _loadingStream = false;
+        _loadingPetsStream = false;
         return [];
       }
       petsSink(_pets.petList);
-      _loadingStream = false;
+      _loadingPetsStream = false;
       return _pets.petList;
     }
 
     //SEND REQUEST---------------------------
 
-    Map<String, dynamic> body = {'type': 'Horse'};
-    if (_pets != null)
-      body = {'page': '${_pets.pagination.currentPage + 1}', 'type': 'Horse'};
+    Map<String, dynamic> body = {};
+    if (_pets != null) body = {'page': '${_pets.pagination.currentPage + 1}'};
 
     final url = Uri.https(_domain, 'v2/animals', body);
     final header = {
@@ -97,11 +108,11 @@ class PetfinderProvider {
     } catch (_) {
       if (_pets == null) {
         petsSink([]);
-        _loadingStream = false;
+        _loadingPetsStream = false;
         return [];
       }
       petsSink(_pets.petList);
-      _loadingStream = false;
+      _loadingPetsStream = false;
       return _pets.petList;
     }
 
@@ -112,33 +123,83 @@ class PetfinderProvider {
     if (_pets == null) {
       _pets = newPets;
       petsSink(_pets.petList);
-
-      _loadingStream = false;
+      _loadingPetsStream = false;
       return _pets.petList;
     }
+
+    newPets.petList = removeRepeated(_pets.getIdList(), newPets.petList);
 
     _pets.petList.addAll(newPets.petList);
     _pets.pagination = newPets.pagination;
     petsSink(_pets.petList);
 
-    _loadingStream = false;
+    _loadingPetsStream = false;
     return _pets.petList;
   }
 
-  Future<List<String>> getTypes() async {
-    if (_token == null) await getToken();
+  Future<List<Organization>> getOrganizations() async {
+    //IS LOADING CHECK---------------------------
 
-    final url = Uri.https(_domain, 'v2/types', {});
+    if (_loadingOrganizationsStream) return [];
+    _loadingOrganizationsStream = true;
+
+    //GET TOKEN---------------------------
+
+    await getToken();
+    if (_token == null) {
+      if (_organizations == null) {
+        organizationsSink([]);
+        _loadingOrganizationsStream = false;
+        return [];
+      }
+      organizationsSink(_organizations.organizationList);
+      _loadingOrganizationsStream = false;
+      return _organizations.organizationList;
+    }
+
+    //SEND REQUEST---------------------------
+
+    Map<String, dynamic> body = {};
+    if (_organizations != null)
+      body = {'page': '${_organizations.pagination.currentPage + 1}'};
+
+    final url = Uri.https(_domain, 'v2/organizations', body);
     final header = {
       'Authorization': '${_token.tokenType} ${_token.accessToken}'
     };
-    final decodedData = await _getRequest(url, header);
-    final petTypes = PetTypes.fromJson(decodedData);
 
-    List<String> petTypesList = [];
-    petTypes.types.forEach((type) {
-      petTypesList.add(type.name);
-    });
-    return petTypesList;
+    //CHECK DECODED DATA---------------------------
+
+    dynamic decodedData;
+    try {
+      decodedData = await _getRequest(url, header);
+    } catch (_) {
+      if (_organizations == null) {
+        organizationsSink([]);
+        _loadingOrganizationsStream = false;
+        return [];
+      }
+      organizationsSink(_organizations.organizationList);
+      _loadingOrganizationsStream = false;
+      return _organizations.organizationList;
+    }
+
+    //GET DATA AND UPDATE STREAM---------------------------
+
+    final newOrganizations = Organizations.fromJson(decodedData);
+
+    if (_organizations == null) {
+      _organizations = newOrganizations;
+      organizationsSink(_organizations.organizationList);
+      _loadingOrganizationsStream = false;
+      return _organizations.organizationList;
+    }
+
+    _organizations.organizationList.addAll(newOrganizations.organizationList);
+    _organizations.pagination = newOrganizations.pagination;
+    organizationsSink(_organizations.organizationList);
+
+    _loadingOrganizationsStream = false;
+    return _organizations.organizationList;
   }
 }

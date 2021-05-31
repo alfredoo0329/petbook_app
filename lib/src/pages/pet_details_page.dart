@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
+import 'package:petbook_app/src/models/general_models.dart';
+import 'package:petbook_app/src/widgets/mini_map_widget.dart';
 
 class PetDetailsPage extends StatefulWidget {
   @override
@@ -38,6 +40,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
                       pet.age, pet.size, pet.breeds, pet.colors),
                   _getAttributes(pet.attributes),
                   _getEnvironment(pet.environment),
+                  _getContactInformation(pet.contact, pet),
                 ]),
               ),
             ),
@@ -51,10 +54,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     return SliverAppBar(
       pinned: true,
       iconTheme: IconThemeData(color: Colors.white),
-      expandedHeight: 400,
-      onStretchTrigger: () {
-        return;
-      },
+      expandedHeight: pet.photos.isEmpty ? null : 500,
       actions: [
         TextButton(
           onPressed: () {},
@@ -82,17 +82,41 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
         ),
         SizedBox(width: 18),
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        background: _getImageSlider(pet.uniqueIdImage, pet.photos, pet.type),
-      ),
+      flexibleSpace: pet.photos.isEmpty
+          ? Container()
+          : Stack(
+              children: [
+                _getImageSlider(pet.uniqueIdImage, pet.photos, pet.name)
+              ],
+            ),
     );
   }
 
-  Widget _getImageSlider(String id, List<Photos> photos, String type) {
+  Widget _getImageSlider(String id, List<Photos> photos, String name) {
     if (photos.isEmpty) return Container();
-    return Container(
-      width: double.infinity,
-      height: 400,
+
+    if (photos.length == 1) {
+      return Positioned.fill(
+        child: Hero(
+          tag: id,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, 'image', arguments: {
+                'id': '$id-0',
+                'images': photos[0],
+                'title': name
+              });
+            },
+            child: Image(
+              fit: BoxFit.cover,
+              image: NetworkImage(photos[0].medium),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Positioned.fill(
       child: Swiper(
         layout: SwiperLayout.DEFAULT,
         itemCount: photos.length,
@@ -113,10 +137,17 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
               ),
             );
 
-          return Image(
-            fit: BoxFit.cover,
-            image: NetworkImage(photos[pos].medium),
+          return Hero(
+            tag: '$id-$pos',
+            child: Image(
+              fit: BoxFit.cover,
+              image: NetworkImage(photos[pos].medium),
+            ),
           );
+        },
+        onTap: (i) {
+          Navigator.pushNamed(context, 'image',
+              arguments: {'id': '$id-$i', 'images': photos[i], 'title': name});
         },
       ),
     );
@@ -261,29 +292,6 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
         : Container();
   }
 
-  Widget _getSectionTitle(String title) {
-    return RichText(
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      text: TextSpan(
-        text: title,
-        style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).primaryColorDark),
-        children: [
-          TextSpan(
-              text: '.',
-              style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w900,
-                  height: .6,
-                  color: Theme.of(context).primaryColor))
-        ],
-      ),
-    );
-  }
-
   Widget _getCharacteristics(
       String age, String size, Breeds breed, PetColors colors) {
     return Container(
@@ -368,7 +376,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
   }
 
   Widget _getColors(PetColors colors) {
-    return colors != null
+    return colors.primary != null
         ? Padding(
             padding: const EdgeInsets.only(top: 12.0),
             child: Row(
@@ -435,7 +443,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
                 _getIconSelected(MdiIcons.paw, 'declawed',
                     attributes.declawed == null ? false : attributes.declawed),
                 _getIconSelected(
-                    MdiIcons.dumbbell,
+                    MdiIcons.dogService,
                     'house\ntrained',
                     attributes.houseTrained == null
                         ? false
@@ -498,7 +506,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
             size: 32,
             color: selected
                 ? Theme.of(context).primaryColor
-                : Theme.of(context).primaryColorDark),
+                : Color.fromRGBO(255, 143, 101, .5)),
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
           child: Text(
@@ -510,10 +518,123 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
                 fontWeight: FontWeight.w500,
                 color: selected
                     ? Theme.of(context).primaryColor
-                    : Theme.of(context).primaryColorDark),
+                    : Color.fromRGBO(255, 143, 101, .5)),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _getContactInformation(Contact contact, Pet pet) {
+    String address =
+        contact.address.address1 != null ? '${contact.address.address1}, ' : '';
+    address += contact.address.city != null ? '${contact.address.city} ' : '';
+    address +=
+        contact.address.postcode != null ? '${contact.address.postcode}, ' : '';
+    address +=
+        contact.address.country != null ? '${contact.address.country} ' : '';
+
+    return Container(
+      padding: EdgeInsets.only(top: 24),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _getSectionTitle('Contact Information'),
+          contact.email != null ? _getEmail(contact.email) : Container(),
+          contact.phone != null ? _getPhones(contact.phone) : Container(),
+          contact.address != null ? _getAddress(address) : Container(),
+          MiniMap(address: address, title: pet.name),
+        ],
+      ),
+    );
+  }
+
+  Widget _getEmail(String email) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Icon(Icons.email_rounded,
+                color: Theme.of(context).primaryColorDark),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Text(email,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getPhones(String phones) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Icon(Icons.phone, color: Theme.of(context).primaryColorDark),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Text(phones,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getAddress(String address) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child:
+                Icon(MdiIcons.home, color: Theme.of(context).primaryColorDark),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Text(address,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getSectionTitle(String title) {
+    return RichText(
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        text: title,
+        style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).primaryColorDark),
+        children: [
+          TextSpan(
+              text: '.',
+              style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w900,
+                  height: .6,
+                  color: Theme.of(context).primaryColor))
+        ],
+      ),
     );
   }
 }

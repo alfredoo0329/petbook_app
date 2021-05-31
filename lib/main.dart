@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
               height: 1.5),
         ),
       ),
-      title: 'Material App',
+      title: 'PetBook App',
       initialRoute: '/',
       routes: getRoutes(),
     );

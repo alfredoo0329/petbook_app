@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:petbook_app/src/models/general_models.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
 import 'package:petbook_app/src/utils/utils.dart';
 

@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:petbook_app/src/providers/petfinder_provider.dart';
 import 'package:petbook_app/src/widgets/bottom_nav_bar_widget.dart';
-import 'package:petbook_app/src/widgets/pet_swiper_widget.dart';
+import 'package:petbook_app/src/widgets/organization_swiper_widget.dart';
 
-class PetsPage extends StatefulWidget {
+class OrganizationsPage extends StatefulWidget {
   @override
-  _PetsPageState createState() => _PetsPageState();
+  _OrganizationsPageState createState() => _OrganizationsPageState();
 }
 
-class _PetsPageState extends State<PetsPage> {
+class _OrganizationsPageState extends State<OrganizationsPage> {
   final PetfinderProvider _petfinder = PetfinderProvider();
 
   @override
   Widget build(BuildContext context) {
-    _petfinder.getPets();
+    _petfinder.getOrganizations();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -32,7 +32,7 @@ class _PetsPageState extends State<PetsPage> {
             children: [
               _getTitle(context),
               _getCardSwiper(context),
-              BottomNavbar(selected: 2),
+              BottomNavbar(selected: 1),
             ],
           ),
         ),
@@ -92,7 +92,7 @@ class _PetsPageState extends State<PetsPage> {
 
   Widget _getCardSwiper(BuildContext context) {
     return StreamBuilder(
-      stream: _petfinder.petsStream,
+      stream: _petfinder.organizationsStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
           return Container(
@@ -102,7 +102,7 @@ class _PetsPageState extends State<PetsPage> {
                   Text('Something went wrong'),
                   ElevatedButton(
                       onPressed: () {
-                        _petfinder.getPets();
+                        _petfinder.getOrganizations();
                       },
                       child: Text('Try Again'))
                 ],
@@ -132,10 +132,11 @@ class _PetsPageState extends State<PetsPage> {
                   children: [
                     Text('Something went wrong'),
                     ElevatedButton(
-                        onPressed: () {
-                          _petfinder.getPets();
-                        },
-                        child: Text('Try Again'))
+                      onPressed: () {
+                        _petfinder.getOrganizations();
+                      },
+                      child: Text('Try Again'),
+                    ),
                   ],
                 ),
               ),
@@ -144,7 +145,9 @@ class _PetsPageState extends State<PetsPage> {
         }
 
         return Expanded(
-          child: PetSwiper(pets: snapshot.data, nextPage: _petfinder.getPets),
+          child: OrganizationSwiper(
+              organizations: snapshot.data,
+              nextPage: _petfinder.getOrganizations),
         );
       },
     );
