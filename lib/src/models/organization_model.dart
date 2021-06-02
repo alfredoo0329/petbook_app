@@ -3,6 +3,7 @@ import 'general_models.dart';
 class Organization {
   String uniqueIdImage;
   String uniqueIdTitle;
+  String uniqueIdTopTitle;
 
   String id;
   String name;

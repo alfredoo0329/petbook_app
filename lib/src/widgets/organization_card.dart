@@ -35,8 +35,8 @@ class OrganizationCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
             child: Column(
               children: [
-                _getOrganizationTime(
-                    context, organization.hours, organization.distance),
+                _getOrganizationTime(context, organization.hours,
+                    organization.distance, organization.uniqueIdTopTitle),
                 _getOrganizationTitle(
                     organization.uniqueIdTitle, context, organization.name),
                 Row(
@@ -97,7 +97,7 @@ class OrganizationCard extends StatelessWidget {
   }
 
   Widget _getOrganizationTime(
-      BuildContext context, Hours time, double distance) {
+      BuildContext context, Hours time, double distance, String id) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -109,12 +109,15 @@ class OrganizationCard extends StatelessWidget {
               color: Theme.of(context).primaryColorDark),
         ),
         distance != null
-            ? Text(
-                '${distance.ceil()}MI',
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).primaryColorDark),
+            ? Hero(
+                tag: id,
+                child: Text(
+                  '${distance.ceil()}MI',
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColorDark),
+                ),
               )
             : SizedBox(),
       ],

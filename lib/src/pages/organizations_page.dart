@@ -71,17 +71,17 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
         children: [
           RichText(
             text: TextSpan(
-              text: 'Find Your\nBest ',
+              text: 'Know Where Their\n',
               style: TextStyle(
                 fontSize: 28,
                 color: Theme.of(context).primaryColorDark,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
               children: [
                 TextSpan(
-                    text: 'Friend',
+                    text: 'Shelters ',
                     style: TextStyle(color: Theme.of(context).primaryColor)),
-                TextSpan(text: '.'),
+                TextSpan(text: 'Are.'),
               ],
             ),
           ),

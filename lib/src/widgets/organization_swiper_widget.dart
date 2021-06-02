@@ -13,6 +13,23 @@ class OrganizationSwiper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int heroPosition = 0;
+
+    if (organizations.length == 1) {
+      organizations[0].uniqueIdImage = '${organizations[0].id}-imageS';
+      organizations[0].uniqueIdTopTitle = '${organizations[0].id}-topTitleS';
+      organizations[0].uniqueIdTitle = '${organizations[0].id}-titleS';
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, 'organization',
+              arguments: organizations[0]);
+        },
+        child: Container(
+            width: 320,
+            child: OrganizationCard(organization: organizations[0])),
+      );
+    }
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -24,11 +41,16 @@ class OrganizationSwiper extends StatelessWidget {
         layout: SwiperLayout.STACK,
         physics: ScrollPhysics(),
         onTap: (pos) {
-          //Navigator.pushNamed(context, 'pet', arguments: organizations[pos]);
+          Navigator.pushNamed(context, 'organization',
+              arguments: organizations[pos]);
         },
         itemBuilder: (BuildContext context, int pos) {
-          organizations[pos].uniqueIdImage = '${organizations[pos].id}-image';
-          organizations[pos].uniqueIdTitle = '${organizations[pos].id}-title';
+          organizations[pos].uniqueIdImage =
+              '$heroPosition-${organizations[pos].id}-image';
+          organizations[pos].uniqueIdTitle =
+              '$heroPosition-${organizations[pos].id}-title';
+          organizations[pos].uniqueIdTopTitle =
+              '$heroPosition-${organizations[pos].id}-topTitle';
           return OrganizationCard(organization: organizations[pos]);
         },
         onIndexChanged: (index) {

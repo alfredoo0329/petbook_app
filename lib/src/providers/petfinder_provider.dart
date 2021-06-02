@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:petbook_app/src/models/organization_model.dart';
 import 'package:petbook_app/src/models/organizations_model.dart';
+import 'package:petbook_app/src/models/pet_filter_model.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
 import 'package:petbook_app/src/models/pets_model.dart';
 import 'package:petbook_app/src/models/token_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:petbook_app/src/utils/utils.dart';
 
-class PetfinderProvider {
+class PetfinderProvider extends ChangeNotifier {
   //CONFIGURATION
   final String _apiKey = 'ahUgGiYEyy94iCZoPBoK9JeKQ3DU1tiP0Ca86m9XfKRe0TpKUP';
   final String _apiSecret = 'Jzo7VWHWp4CdpJqB0pzJJz6A0GrypneSX4bIA2jU';
@@ -19,13 +21,16 @@ class PetfinderProvider {
   Pets _pets;
   Organizations _organizations;
 
-  //STREAM CONTROLLER FUNCTIONS
+  PetFilterModel petFilter = PetFilterModel();
+
+  //PETS STREAM CONTROLLER FUNCTIONS
   final _petsStreamController = StreamController<List<Pet>>.broadcast();
   Function(List<Pet>) get petsSink => _petsStreamController.sink.add;
   Stream<List<Pet>> get petsStream => _petsStreamController.stream;
   void disposePetsStream() => _petsStreamController.close();
   bool _loadingPetsStream = false;
 
+  //ORGANIZATIONS STREAM CONTROLLER FUNCTIONS
   final _organizationsStreamController =
       StreamController<List<Organization>>.broadcast();
   Function(List<Organization>) get organizationsSink =>
@@ -71,12 +76,15 @@ class PetfinderProvider {
   }
 
   Future<List<Pet>> getPets() async {
-    //IS LOADING CHECK---------------------------
+    //IS IN FINAL PAGE ---------------------------
+    if (_pets != null) if (_pets.pagination.currentPage ==
+        _pets.pagination.totalPages) return [];
 
+    //IS LOADING CHECK ---------------------------
     if (_loadingPetsStream) return [];
     _loadingPetsStream = true;
 
-    //GET TOKEN---------------------------
+    //GET TOKEN ---------------------------
 
     await getToken();
     if (_token == null) {
@@ -94,10 +102,12 @@ class PetfinderProvider {
 
     Map<String, dynamic> body = {};
     if (_pets != null) body = {'page': '${_pets.pagination.currentPage + 1}'};
+    body.addAll(petFilter.toJson());
 
     final url = Uri.https(_domain, 'v2/animals', body);
     final header = {
-      'Authorization': '${_token.tokenType} ${_token.accessToken}'
+      'Authorization': '${_token.tokenType} ${_token.accessToken}',
+      'Content-Type': 'application/json'
     };
 
     //CHECK DECODED DATA---------------------------
@@ -201,5 +211,54 @@ class PetfinderProvider {
 
     _loadingOrganizationsStream = false;
     return _organizations.organizationList;
+  }
+
+  applyNewFilter(PetFilterModel newFilter) async {
+    petFilter = newFilter;
+    _pets = null;
+    _petsStreamController.add(null);
+    await getPets();
+  }
+
+  Future<List<String>> getPetBreeds(String type) async {
+    final url = Uri.https(_domain, 'v2/types/$type/breeds');
+    final header = {
+      'Authorization': '${_token.tokenType} ${_token.accessToken}'
+    };
+    dynamic decodedData;
+    try {
+      decodedData = await _getRequest(url, header);
+    } catch (_) {
+      return [];
+    }
+
+    Map<String, dynamic> json = decodedData;
+
+    final List<String> breedList = [];
+    for (var breed in json['breeds']) {
+      breedList.add(breed['name']);
+    }
+    return breedList;
+  }
+
+  Future<List<String>> getPetColors(String type) async {
+    final url = Uri.https(_domain, 'v2/types/$type');
+    final header = {
+      'Authorization': '${_token.tokenType} ${_token.accessToken}'
+    };
+    dynamic decodedData;
+    try {
+      decodedData = await _getRequest(url, header);
+    } catch (_) {
+      return [];
+    }
+
+    Map<String, dynamic> json = decodedData;
+
+    final List<String> colorList = [];
+    for (var color in json['type']['colors']) {
+      colorList.add(color);
+    }
+    return colorList;
   }
 }

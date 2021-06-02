@@ -5,12 +5,7 @@ import 'package:petbook_app/src/models/pet_model.dart';
 import 'package:petbook_app/src/models/general_models.dart';
 import 'package:petbook_app/src/widgets/mini_map_widget.dart';
 
-class PetDetailsPage extends StatefulWidget {
-  @override
-  _PetDetailsPageState createState() => _PetDetailsPageState();
-}
-
-class _PetDetailsPageState extends State<PetDetailsPage> {
+class PetDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Pet pet = ModalRoute.of(context).settings.arguments;
@@ -19,7 +14,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            _getAppBar(pet),
+            _getAppBar(context, pet),
             SliverPadding(
               padding: EdgeInsets.all(24.0),
               sliver: SliverList(
@@ -37,10 +32,10 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
                   ),
                   _getDescription(context, pet.description),
                   _getCharacteristics(
-                      pet.age, pet.size, pet.breeds, pet.colors),
-                  _getAttributes(pet.attributes),
-                  _getEnvironment(pet.environment),
-                  _getContactInformation(pet.contact, pet),
+                      context, pet.age, pet.size, pet.breeds, pet.colors),
+                  _getAttributes(context, pet.attributes),
+                  _getEnvironment(context, pet.environment),
+                  _getContactInformation(context, pet.contact, pet),
                 ]),
               ),
             ),
@@ -50,7 +45,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getAppBar(Pet pet) {
+  Widget _getAppBar(BuildContext context, Pet pet) {
     return SliverAppBar(
       pinned: true,
       iconTheme: IconThemeData(color: Colors.white),
@@ -84,72 +79,65 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
       ],
       flexibleSpace: pet.photos.isEmpty
           ? Container()
-          : Stack(
-              children: [
-                _getImageSlider(pet.uniqueIdImage, pet.photos, pet.name)
-              ],
+          : FlexibleSpaceBar(
+              background: _getImageSlider(
+                  context, pet.uniqueIdImage, pet.photos, pet.name),
             ),
     );
   }
 
-  Widget _getImageSlider(String id, List<Photos> photos, String name) {
+  Widget _getImageSlider(
+      BuildContext context, String id, List<Photos> photos, String name) {
     if (photos.isEmpty) return Container();
 
     if (photos.length == 1) {
-      return Positioned.fill(
-        child: Hero(
-          tag: id,
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, 'image', arguments: {
-                'id': '$id-0',
-                'images': photos[0],
-                'title': name
-              });
-            },
-            child: Image(
-              fit: BoxFit.cover,
-              image: NetworkImage(photos[0].medium),
-            ),
+      return Hero(
+        tag: id,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, 'image',
+                arguments: {'id': '$id-0', 'images': photos[0], 'title': name});
+          },
+          child: Image(
+            fit: BoxFit.cover,
+            image: NetworkImage(photos[0].medium),
           ),
         ),
       );
     }
 
-    return Positioned.fill(
-      child: Swiper(
-        layout: SwiperLayout.DEFAULT,
-        itemCount: photos.length,
-        pagination: photos.length > 1
-            ? SwiperPagination(
-                builder: DotSwiperPaginationBuilder(
-                    space: 12, size: 12, activeSize: 16),
-                margin: EdgeInsets.all(16),
-              )
-            : null,
-        itemBuilder: (context, pos) {
-          if (pos == 0)
-            return Hero(
-              tag: id,
-              child: Image(
-                fit: BoxFit.cover,
-                image: NetworkImage(photos[pos].medium),
-              ),
-            );
-
+    return Swiper(
+      layout: SwiperLayout.DEFAULT,
+      itemCount: photos.length,
+      pagination: photos.length > 1
+          ? SwiperPagination(
+              builder: DotSwiperPaginationBuilder(
+                  space: 12, size: 12, activeSize: 16),
+              margin: EdgeInsets.all(16),
+            )
+          : null,
+      itemBuilder: (context, pos) {
+        if (pos == 0)
           return Hero(
-            tag: '$id-$pos',
+            tag: id,
             child: Image(
               fit: BoxFit.cover,
               image: NetworkImage(photos[pos].medium),
             ),
           );
-        },
-        onTap: (i) {
-          Navigator.pushNamed(context, 'image',
-              arguments: {'id': '$id-$i', 'images': photos[i], 'title': name});
-        },
-      ),
+
+        return Hero(
+          tag: '$id-$pos',
+          child: Image(
+            fit: BoxFit.cover,
+            image: NetworkImage(photos[pos].medium),
+          ),
+        );
+      },
+      onTap: (i) {
+        Navigator.pushNamed(context, 'image',
+            arguments: {'id': '$id-$i', 'images': photos[i], 'title': name});
+      },
     );
   }
 
@@ -292,15 +280,15 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
         : Container();
   }
 
-  Widget _getCharacteristics(
-      String age, String size, Breeds breed, PetColors colors) {
+  Widget _getCharacteristics(BuildContext context, String age, String size,
+      Breeds breed, PetColors colors) {
     return Container(
       padding: EdgeInsets.only(top: 24),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _getSectionTitle('Characteristics'),
+          _getSectionTitle(context, 'Characteristics'),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Row(
@@ -420,14 +408,14 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
         : Container();
   }
 
-  Widget _getAttributes(Attributes attributes) {
+  Widget _getAttributes(BuildContext context, Attributes attributes) {
     return Container(
       padding: EdgeInsets.only(top: 24),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _getSectionTitle('Attributes'),
+          _getSectionTitle(context, 'Attributes'),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Row(
@@ -435,26 +423,30 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _getIconSelected(
+                    context,
                     Icons.cut_rounded,
                     'spayed\nneutered',
                     attributes.spayedNeutered == null
                         ? false
                         : attributes.spayedNeutered),
-                _getIconSelected(MdiIcons.paw, 'declawed',
+                _getIconSelected(context, MdiIcons.paw, 'declawed',
                     attributes.declawed == null ? false : attributes.declawed),
                 _getIconSelected(
+                    context,
                     MdiIcons.dogService,
                     'house\ntrained',
                     attributes.houseTrained == null
                         ? false
                         : attributes.houseTrained),
                 _getIconSelected(
+                    context,
                     MdiIcons.heartFlash,
                     'special\nneeds',
                     attributes.specialNeeds == null
                         ? false
                         : attributes.specialNeeds),
                 _getIconSelected(
+                    context,
                     MdiIcons.needle,
                     'shots\ncurrent',
                     attributes.shotsCurrent == null
@@ -468,24 +460,25 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getEnvironment(Environment environment) {
+  Widget _getEnvironment(BuildContext context, Environment environment) {
     return Container(
       padding: EdgeInsets.only(top: 24),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _getSectionTitle('Environment'),
+          _getSectionTitle(context, 'Environment'),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _getIconSelected(MdiIcons.dog, 'good with\ndogs',
+                _getIconSelected(context, MdiIcons.dog, 'good with\ndogs',
                     environment.dogs == null ? false : environment.dogs),
-                _getIconSelected(MdiIcons.cat, 'good with\ncats',
+                _getIconSelected(context, MdiIcons.cat, 'good with\ncats',
                     environment.cats == null ? false : environment.cats),
                 _getIconSelected(
+                    context,
                     Icons.child_care,
                     'good with\nchildren',
                     environment.children == null
@@ -499,7 +492,8 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getIconSelected(IconData icon, String text, bool selected) {
+  Widget _getIconSelected(
+      BuildContext context, IconData icon, String text, bool selected) {
     return Column(
       children: [
         Icon(icon,
@@ -525,7 +519,8 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getContactInformation(Contact contact, Pet pet) {
+  Widget _getContactInformation(
+      BuildContext context, Contact contact, Pet pet) {
     String address =
         contact.address.address1 != null ? '${contact.address.address1}, ' : '';
     address += contact.address.city != null ? '${contact.address.city} ' : '';
@@ -540,17 +535,21 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _getSectionTitle('Contact Information'),
-          contact.email != null ? _getEmail(contact.email) : Container(),
-          contact.phone != null ? _getPhones(contact.phone) : Container(),
-          contact.address != null ? _getAddress(address) : Container(),
+          _getSectionTitle(context, 'Contact Information'),
+          contact.email != null
+              ? _getEmail(context, contact.email)
+              : Container(),
+          contact.phone != null
+              ? _getPhones(context, contact.phone)
+              : Container(),
+          contact.address != null ? _getAddress(context, address) : Container(),
           MiniMap(address: address, title: pet.name),
         ],
       ),
     );
   }
 
-  Widget _getEmail(String email) {
+  Widget _getEmail(BuildContext context, String email) {
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Row(
@@ -572,7 +571,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getPhones(String phones) {
+  Widget _getPhones(BuildContext context, String phones) {
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Row(
@@ -593,7 +592,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getAddress(String address) {
+  Widget _getAddress(BuildContext context, String address) {
     return Padding(
       padding: const EdgeInsets.only(top: 12.0),
       child: Row(
@@ -615,7 +614,7 @@ class _PetDetailsPageState extends State<PetDetailsPage> {
     );
   }
 
-  Widget _getSectionTitle(String title) {
+  Widget _getSectionTitle(BuildContext context, String title) {
     return RichText(
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

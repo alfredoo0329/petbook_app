@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:petbook_app/src/icon_models/pet_icons.dart';
 import 'package:petbook_app/src/providers/petfinder_provider.dart';
 import 'package:petbook_app/src/widgets/bottom_nav_bar_widget.dart';
 import 'package:petbook_app/src/widgets/pet_swiper_widget.dart';
+import 'package:provider/provider.dart';
 
 class PetsPage extends StatefulWidget {
   @override
@@ -10,10 +12,11 @@ class PetsPage extends StatefulWidget {
 }
 
 class _PetsPageState extends State<PetsPage> {
-  final PetfinderProvider _petfinder = PetfinderProvider();
+  PetfinderProvider _petfinder;
 
   @override
   Widget build(BuildContext context) {
+    _petfinder = Provider.of<PetfinderProvider>(context);
     _petfinder.getPets();
 
     return Scaffold(
@@ -75,7 +78,7 @@ class _PetsPageState extends State<PetsPage> {
               style: TextStyle(
                 fontSize: 28,
                 color: Theme.of(context).primaryColorDark,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
               children: [
                 TextSpan(
@@ -130,12 +133,24 @@ class _PetsPageState extends State<PetsPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Something went wrong'),
-                    ElevatedButton(
-                        onPressed: () {
-                          _petfinder.getPets();
-                        },
-                        child: Text('Try Again'))
+                    Icon(PetIcons.notfound,
+                        size: 144, color: Theme.of(context).primaryColor),
+                    Text(
+                      'No Pet Found',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28),
+                    ),
+                    Text(
+                      'Unfortunately we couldn´t find your friend',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14),
+                    ),
                   ],
                 ),
               ),

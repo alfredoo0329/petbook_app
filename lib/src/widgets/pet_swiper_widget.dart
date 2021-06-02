@@ -13,6 +13,21 @@ class PetSwiper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int heroPosition = 0;
+
+    if (pets.length == 1) {
+      pets[0].uniqueIdImage = '${pets[0].id}-imageS';
+      pets[0].uniqueIdTopTitle = '${pets[0].id}-titleS';
+      pets[0].uniqueIdTitle = '${pets[0].id}-topTitleS';
+      pets[0].uniqueIdTags = '${pets[0].id}-tagsS';
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, 'pet', arguments: pets[0]);
+        },
+        child: Container(width: 320, child: PetCard(pet: pets[0])),
+      );
+    }
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -27,10 +42,11 @@ class PetSwiper extends StatelessWidget {
           Navigator.pushNamed(context, 'pet', arguments: pets[pos]);
         },
         itemBuilder: (BuildContext context, int pos) {
-          pets[pos].uniqueIdImage = '${pets[pos].id}-image';
-          pets[pos].uniqueIdTopTitle = '${pets[pos].id}-title';
-          pets[pos].uniqueIdTitle = '${pets[pos].id}-topTitle';
-          pets[pos].uniqueIdTags = '${pets[pos].id}-tags';
+          heroPosition++;
+          pets[pos].uniqueIdImage = '$heroPosition-${pets[pos].id}-image';
+          pets[pos].uniqueIdTopTitle = '$heroPosition-${pets[pos].id}-title';
+          pets[pos].uniqueIdTitle = '$heroPosition-${pets[pos].id}-topTitle';
+          pets[pos].uniqueIdTags = '$heroPosition-${pets[pos].id}-tags';
           return PetCard(pet: pets[pos]);
         },
         onIndexChanged: (index) {

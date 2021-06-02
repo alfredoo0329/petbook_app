@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:petbook_app/src/icon_models/pet_icons.dart';
 
 class BottomNavbar extends StatelessWidget {
   final int selected;
@@ -68,7 +70,7 @@ class BottomNavbar extends StatelessWidget {
                             Navigator.pushReplacementNamed(
                                 context, 'organizations');
                           },
-                          icon: Icon(Icons.home,
+                          icon: Icon(FontAwesomeIcons.home,
                               color: selected == 1
                                   ? Theme.of(context).primaryColor
                                   : Colors.white),
@@ -91,12 +93,22 @@ class BottomNavbar extends StatelessWidget {
                       Tooltip(
                         message: 'Search',
                         child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.search,
-                              color: selected == 3
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.white),
-                          iconSize: selected == 3 ? 28 : 24,
+                          onPressed: () async {
+                            /*await Provider.of<PetfinderProvider>(context,
+                                    listen: false)
+                                .resetPetsStream();*/
+                            if (selected == 2) {
+                              Navigator.pushNamed(context, 'petFilter');
+                              return;
+                            }
+                            //Navigator.pushNamed(context, routeName)
+                          },
+                          icon: Icon(
+                              selected == 1
+                                  ? PetIcons.searchShelter
+                                  : PetIcons.searchPet,
+                              color: Colors.white),
+                          iconSize: 28,
                         ),
                       ),
                     ],
