@@ -401,11 +401,17 @@ class _PetFilterState extends State<PetFilter> {
 
   DropdownMenuItem<String> _getDropdownItem(
       {String title, String value, IconData icon, Color color}) {
+    if (icon == null) {
+      return DropdownMenuItem(
+        child: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
+        value: value,
+      );
+    }
     return DropdownMenuItem(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title),
+          Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
           SizedBox(width: 12),
           icon == null
               ? Container()
