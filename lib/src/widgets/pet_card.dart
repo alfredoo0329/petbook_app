@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:petbook_app/src/models/general_models.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
+import 'package:petbook_app/src/providers/firepets_provider.dart';
 import 'package:petbook_app/src/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class PetCard extends StatelessWidget {
   PetCard({this.pet});
@@ -61,7 +63,20 @@ class PetCard extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        FirepetsProvider firepetsProvider =
+                            Provider.of<FirepetsProvider>(context,
+                                listen: false);
+                        if (firepetsProvider.email == null) {
+                          final snackBar = SnackBar(
+                              content: Text(
+                                  'To Like and Save your Favorite Pets you Need an Account'));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          return;
+                        }
+
+                        firepetsProvider.saveLikedPet(pet);
+                      },
                       child: Text(
                         'LIKE',
                         style: TextStyle(fontSize: 12, color: Colors.pink),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart' show Widget, BuildContext;
 import 'package:petbook_app/src/pages/image_view_page.dart';
+import 'package:petbook_app/src/pages/liked_pets_page.dart';
+import 'package:petbook_app/src/pages/login_page.dart';
 import 'package:petbook_app/src/pages/map_view_page.dart';
 import 'package:petbook_app/src/pages/organization_details_page.dart';
 import 'package:petbook_app/src/pages/organizations_page.dart';
@@ -15,6 +17,8 @@ Map<String, Widget Function(BuildContext)> getRoutes() {
     'organization': (BuildContext context) => OrganizationDetailsPage(),
     'image': (BuildContext context) => ImageViewPage(),
     'map': (BuildContext context) => MapView(),
-    'petFilter': (BuildContext context) => PetFilter()
+    'petFilter': (BuildContext context) => PetFilter(),
+    'login': (BuildContext context) => LoginPage(),
+    'liked': (BuildContext context) => LikedPetsPage()
   };
 }

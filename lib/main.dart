@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:petbook_app/src/providers/firepets_provider.dart';
 import 'package:petbook_app/src/providers/petfinder_provider.dart';
 import 'package:petbook_app/src/routes/routes.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PetfinderProvider()),
+        ChangeNotifierProvider(create: (_) => FirepetsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -48,7 +50,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         title: 'PetBook App',
-        initialRoute: '/',
+        initialRoute: 'login',
         routes: getRoutes(),
       ),
     );

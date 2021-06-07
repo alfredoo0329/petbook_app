@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
    <application
-        android:label="petbook_app"
+        android:label="PetBook"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyA8s3LcMbJTOjDvFj9DdNzG1Ygy2SmkgcI"/>

@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:petbook_app/src/models/organization_model.dart';
 import 'package:petbook_app/src/models/pet_model.dart';
+import 'package:petbook_app/src/providers/firepets_provider.dart';
+import 'package:petbook_app/src/providers/petfinder_provider.dart';
+import 'package:provider/provider.dart';
 
 getInfoFromDecodedData(Map<String, dynamic> decodedData) {
   final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
@@ -66,4 +70,13 @@ List<Pet> removeRepeated(List<int> oldPets, List<Pet> newPets) {
   removePositions = removePositions.reversed.toList();
   removePositions.forEach((i) => newPets.removeAt(i));
   return newPets;
+}
+
+Future<List<Pet>> getPets(BuildContext context) async {
+  FirepetsProvider firepets = Provider.of<FirepetsProvider>(context);
+  PetfinderProvider petfinder = Provider.of<PetfinderProvider>(context);
+
+  final petIds = await firepets.getPets();
+  final petList = await petfinder.getPetsById(petIds);
+  return petList;
 }

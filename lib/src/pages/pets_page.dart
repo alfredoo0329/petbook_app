@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:petbook_app/src/icon_models/pet_icons.dart';
+import 'package:petbook_app/src/providers/firepets_provider.dart';
 import 'package:petbook_app/src/providers/petfinder_provider.dart';
 import 'package:petbook_app/src/widgets/bottom_nav_bar_widget.dart';
 import 'package:petbook_app/src/widgets/pet_swiper_widget.dart';
@@ -49,20 +49,33 @@ class _PetsPageState extends State<PetsPage> {
       titleSpacing: 18,
       backgroundColor: Colors.transparent,
       elevation: 0,
+      leadingWidth: 0,
+      leading: Container(),
       title: Image(
         image: AssetImage('assets/images/logotype.png'),
         height: 30,
         fit: BoxFit.cover,
       ),
       actions: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
-          child: FaIcon(
-            FontAwesomeIcons.solidUserCircle,
-            color: Theme.of(context).primaryColor,
-            size: 28,
-          ),
-        )
+        IconButton(
+          icon: Icon(Icons.logout, color: Theme.of(context).primaryColor),
+          onPressed: () {
+            FirepetsProvider firepetsProvider =
+                Provider.of<FirepetsProvider>(context, listen: false);
+            firepetsProvider.email = null;
+            firepetsProvider.key = '';
+            Navigator.of(context).pop();
+          },
+        ),
+        IconButton(
+            icon: Icon(
+              Icons.star_rate_rounded,
+              color: Theme.of(context).primaryColor,
+              size: 28,
+            ),
+            onPressed: () {
+              //Navigator.pushNamed(context, 'liked');
+            })
       ],
     );
   }

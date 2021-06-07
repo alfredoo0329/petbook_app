@@ -147,6 +147,41 @@ class PetfinderProvider extends ChangeNotifier {
     return _pets.petList;
   }
 
+  Future<Pet> getPet(String id) async {
+    await getToken();
+    if (_token == null) return null;
+
+    //SEND REQUEST---------------------------
+
+    final body = {'id': '$id'};
+    final url = Uri.https(_domain, 'v2/animals', body);
+    final header = {
+      'Authorization': '${_token.tokenType} ${_token.accessToken}',
+      'Content-Type': 'application/json'
+    };
+
+    //CHECK DECODED DATA---------------------------
+
+    dynamic decodedData;
+    try {
+      decodedData = await _getRequest(url, header);
+    } catch (_) {
+      return null;
+    }
+
+    //GET DATA AND UPDATE STREAM---------------------------
+    return Pet.fromJson(decodedData['animals'][0]);
+  }
+
+  Future<List<Pet>> getPetsById(List<dynamic> petIds) async {
+    List<Pet> petList = [];
+    petIds.forEach((id) async {
+      final Pet petTemp = await getPet(id.toString());
+      petList.add(petTemp);
+    });
+    return petList;
+  }
+
   Future<List<Organization>> getOrganizations() async {
     //IS LOADING CHECK---------------------------
 
